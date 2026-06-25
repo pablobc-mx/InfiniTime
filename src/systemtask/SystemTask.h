@@ -9,7 +9,18 @@
 #include <heartratetask/HeartRateTask.h>
 #include <components/settings/Settings.h>
 #include <drivers/Bma421.h>
+#include <drivers/SC7A20.h>
 #include <drivers/PinMap.h>
+
+namespace Pinetime {
+  namespace Drivers {
+#ifdef DRIVER_ACC_SC7A20
+    using MotionSensorType = SC7A20;
+#else
+    using MotionSensorType = Bma421;
+#endif
+  }
+}
 #include <components/motion/MotionController.h>
 
 #include "systemtask/SystemMonitor.h"
@@ -67,7 +78,7 @@ namespace Pinetime {
                  Pinetime::Controllers::NotificationManager& notificationManager,
                  Pinetime::Drivers::Hrs3300& heartRateSensor,
                  Pinetime::Controllers::MotionController& motionController,
-                 Pinetime::Drivers::Bma421& motionSensor,
+                 Pinetime::Drivers::MotionSensorType& motionSensor,
                  Controllers::Settings& settingsController,
                  Pinetime::Controllers::HeartRateController& heartRateController,
                  Pinetime::Applications::DisplayApp& displayApp,
@@ -116,7 +127,7 @@ namespace Pinetime {
       Pinetime::Drivers::Watchdog& watchdog;
       Pinetime::Controllers::NotificationManager& notificationManager;
       Pinetime::Drivers::Hrs3300& heartRateSensor;
-      Pinetime::Drivers::Bma421& motionSensor;
+      Pinetime::Drivers::MotionSensorType& motionSensor;
       Pinetime::Controllers::Settings& settingsController;
       Pinetime::Controllers::HeartRateController& heartRateController;
       Pinetime::Controllers::MotionController& motionController;

@@ -45,7 +45,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
                        Pinetime::Controllers::NotificationManager& notificationManager,
                        Pinetime::Drivers::Hrs3300& heartRateSensor,
                        Pinetime::Controllers::MotionController& motionController,
-                       Pinetime::Drivers::Bma421& motionSensor,
+                       Pinetime::Drivers::MotionSensorType& motionSensor,
                        Controllers::Settings& settingsController,
                        Pinetime::Controllers::HeartRateController& heartRateController,
                        Pinetime::Applications::DisplayApp& displayApp,
@@ -136,7 +136,7 @@ void SystemTask::Work() {
   twiMaster.Init();
 
   motionSensor.Init();
-  motionController.Init(motionSensor.DeviceType());
+  motionController.Init(static_cast<Pinetime::Drivers::Bma421::DeviceTypes>(motionSensor.DeviceType()));
   settingsController.Init();
 
   displayApp.Register(this);

@@ -442,6 +442,7 @@ list(APPEND SOURCE_FILES
         drivers/InternalFlash.cpp
         drivers/Hrs3300.cpp
         drivers/Bma421.cpp
+        drivers/SC7A20.cpp
         drivers/Bma421_C/bma4.c
         drivers/Bma421_C/bma423.c
         components/battery/BatteryController.cpp
@@ -513,6 +514,7 @@ list(APPEND RECOVERY_SOURCE_FILES
         drivers/InternalFlash.cpp
         drivers/Hrs3300.cpp
         drivers/Bma421.cpp
+        drivers/SC7A20.cpp
         drivers/Bma421_C/bma4.c
         drivers/Bma421_C/bma423.c
         components/battery/BatteryController.cpp
@@ -633,6 +635,8 @@ set(INCLUDE_FILES
         drivers/Hrs3300.h
         drivers/PinMap.h
         drivers/Bma421.h
+        drivers/SC7A20_registers.h
+        drivers/SC7A20.h
         drivers/Bma421_C/bma4.c
         drivers/Bma421_C/bma423.c
         components/battery/BatteryController.h
@@ -821,12 +825,16 @@ elseif(TARGET_DEVICE STREQUAL "MOY_TON5") # P8b
   add_definitions(-DCLOCK_CONFIG_LF_SRC=0) # RC
   add_definitions(-DMYNEWT_VAL_BLE_LL_SCA=500)
   add_definitions(-DCLOCK_CONFIG_LF_CAL_ENABLED=1)
+  add_definitions(-DDRIVER_ACC_SC7A20)
+  add_definitions(-DDRIVER_TOUCH_REPORT)
 elseif(TARGET_DEVICE STREQUAL "MOY_UNK") # P8b mirrored
   add_definitions(-DDRIVER_PINMAP_P8)
   add_definitions(-DCLOCK_CONFIG_LF_SRC=0) # RC
   add_definitions(-DMYNEWT_VAL_BLE_LL_SCA=500)
   add_definitions(-DCLOCK_CONFIG_LF_CAL_ENABLED=1)
   add_definitions(-DDRIVER_DISPLAY_MIRROR)
+  add_definitions(-DDRIVER_ACC_SC7A20)
+  add_definitions(-DDRIVER_TOUCH_REPORT)
 else()
   message(FATAL_ERROR "Invalid TARGET_DEVICE")
 endif()
@@ -909,6 +917,7 @@ target_compile_options(littlefs PRIVATE
         $<$<CONFIG:DEBUG>: ${DEBUG_FLAGS}>
         $<$<CONFIG:RELEASE>: ${RELEASE_FLAGS}>
         $<$<COMPILE_LANGUAGE:CXX>: ${CXX_FLAGS}>
+        -DLFS_NO_DEBUG -DLFS_NO_WARN
         $<$<COMPILE_LANGUAGE:ASM>: ${ASM_FLAGS}>
         )
 

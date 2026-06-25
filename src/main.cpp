@@ -25,7 +25,11 @@
 #include <task.h>
 #include <timers.h>
 #include <drivers/Hrs3300.h>
-#include <drivers/Bma421.h>
+#ifdef DRIVER_ACC_SC7A20
+  #include <drivers/SC7A20.h>
+#else
+  #include <drivers/Bma421.h>
+#endif
 
 #include "BootloaderVersion.h"
 #include "components/battery/BatteryController.h"
@@ -86,7 +90,11 @@ Pinetime::Drivers::Cst816S touchPanel {twiMaster, touchPanelTwiAddress};
   #include "displayapp/DisplayApp.h"
   #include "main.h"
 #endif
+#ifdef DRIVER_ACC_SC7A20
+Pinetime::Drivers::SC7A20 motionSensor {twiMaster, motionSensorTwiAddress};
+#else
 Pinetime::Drivers::Bma421 motionSensor {twiMaster, motionSensorTwiAddress};
+#endif
 Pinetime::Drivers::Hrs3300 heartRateSensor {twiMaster, heartRateSensorTwiAddress};
 
 TimerHandle_t debounceTimer;
