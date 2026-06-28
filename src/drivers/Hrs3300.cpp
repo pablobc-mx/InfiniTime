@@ -65,35 +65,18 @@ void Hrs3300::Disable() {
 }
 
 Hrs3300::PackedHrsAls Hrs3300::ReadHrsAls() {
-  constexpr Registers dataRegisters[] =
-    {Registers::C1dataM, Registers::C0DataM, Registers::C0DataH, Registers::C1dataH, Registers::C1dataL, Registers::C0dataL};
-  // Calculate smallest register address
-  constexpr uint8_t baseOffset = static_cast<uint8_t>(*std::min_element(std::begin(dataRegisters), std::end(dataRegisters)));
-  // Calculate largest address to determine length of read needed
-  // Add one to largest relative index to find the length
-  constexpr uint8_t length = static_cast<uint8_t>(*std::max_element(std::begin(dataRegisters), std::end(dataRegisters))) - baseOffset + 1;
+  // Read registers individually (burst reads across non-contiguous 0x0b-0x0c gap
+  // may produce garbage on some HRS3300 variants)
+  auto hrsM = ReadRegister(static_cast<uint8_t>(Registers::C0DataM));
+  auto hrsH = ReadRegister(static_cast<uint8_t>(Registers::C0DataH));
+  auto hrsL = ReadRegister(static_cast<uint8_t>(Registers::C0dataL));
+  auto alsM = ReadRegister(static_cast<uint8_t>(Registers::C1dataM));
+  auto alsH = ReadRegister(static_cast<uint8_t>(Registers::C1dataH));
+  auto alsL = ReadRegister(static_cast<uint8_t>(Registers::C1dataL));
 
-  Hrs3300::PackedHrsAls res;
-  uint8_t buf[length];
-  auto ret = twiMaster.Read(twiAddress, baseOffset, buf, length);
-  if (ret != TwiMaster::ErrorCodes::NoError) {
-    NRF_LOG_INFO("READ ERROR");
-  }
-  // hrs
-  uint8_t m = static_cast<uint8_t>(Registers::C0DataM) - baseOffset;
-  uint8_t h = static_cast<uint8_t>(Registers::C0DataH) - baseOffset;
-  uint8_t l = static_cast<uint8_t>(Registers::C0dataL) - baseOffset;
-  // There are two extra bits (17 and 18) but they are not read here
-  // as resolutions >16bit aren't practically useful (too slow) and
-  // all hrs values throughout InfiniTime are 16bit
-  res.hrs = (buf[m] << 8) | ((buf[h] & 0x0f) << 4) | (buf[l] & 0x0f);
-
-  // als
-  m = static_cast<uint8_t>(Registers::C1dataM) - baseOffset;
-  h = static_cast<uint8_t>(Registers::C1dataH) - baseOffset;
-  l = static_cast<uint8_t>(Registers::C1dataL) - baseOffset;
-  res.als = ((buf[h] & 0x3f) << 11) | (buf[m] << 3) | (buf[l] & 0x07);
-
+  PackedHrsAls res;
+  res.hrs = ((hrsL & 0x30) << 12) | (hrsM << 8) | ((hrsH & 0x0f) << 4) | (hrsL & 0x0f);
+  res.als = ((alsH & 0x3f) << 11) | (alsM << 3) | (alsL & 0x07);
   return res;
 }
 
