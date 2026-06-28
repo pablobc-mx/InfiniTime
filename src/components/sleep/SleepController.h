@@ -42,6 +42,7 @@ namespace Pinetime {
       // Session tracking
       uint32_t sessionStartTime = 0;
       uint32_t sessionSeconds = 0;
+      uint32_t lastTickTime = 0;  // monotonic tracker for time-jump detection
 
       // Last completed session
       uint32_t lastSessionStart = 0;

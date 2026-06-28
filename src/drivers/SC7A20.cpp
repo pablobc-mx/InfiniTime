@@ -83,11 +83,13 @@ SC7A20::Values SC7A20::Process() {
 
   // Averages in mg (±2g = 2000 mg range, 12-bit)
   int16_t avgs[3] = {0};
-  for (uint8_t i = 0; i < length; i++)
+  if (length > 0) {
+    for (uint8_t i = 0; i < length; i++)
+      for (uint8_t j = 0; j < 3; j++)
+        avgs[j] += (fifo[i][j] * 2000) / (1 << 11);
     for (uint8_t j = 0; j < 3; j++)
-      avgs[j] += (fifo[i][j] * 2000) / (1 << 11);
-  for (uint8_t j = 0; j < 3; j++)
-    avgs[j] /= length;
+      avgs[j] /= length;
+  }
 
   // --- Software step counting ---
   for (uint8_t i = 0; i < length; i++) {

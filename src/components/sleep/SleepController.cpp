@@ -12,7 +12,25 @@ SleepController::SleepController(FS& fs) : fs{fs} {
 
 void SleepController::Update(int16_t x, int16_t y, int16_t z, uint32_t currentTimeSec) {
   // Input guard: if time hasn't been set yet (epoch 0), skip
-  if (currentTimeSec < 100000) return;
+  if (currentTimeSec < 100000) {
+    lastTickTime = 0; // reset monotonic tracker until time is real
+    return;
+  }
+
+  // Detect time jumps (clock sync, DST, manual set).
+  // If time moves backward or jumps forward > 120 sec, reset timestamps
+  // to avoid duration underflow / phantom sleep.
+  if (lastTickTime != 0) {
+    int32_t delta = static_cast<int32_t>(currentTimeSec - lastTickTime);
+    if (delta < 0 || delta > 120) {
+      stillSince = 0;
+      motionSince = 0;
+      lastRestlessCheck = 0;
+      // Don't abort an in-progress session — just reset the motion timers
+      // so the duration calcs recover on the next tick.
+    }
+  }
+  lastTickTime = currentTimeSec;
 
   int16_t dx = std::abs(x - lastX);
   int16_t dy = std::abs(y - lastY);
