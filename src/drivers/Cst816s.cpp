@@ -59,38 +59,42 @@ bool Cst816S::Init() {
 
   // Disable auto-reset after 5s of no gesture
   // The reset kills the current touch point, so paint/pong etc breaks
-  twiMaster.Write(twiAddress, 0xFB, 0, 1);
+  static constexpr uint8_t autoResetDisable = 0x00;
+  twiMaster.Write(twiAddress, 0xFB, &autoResetDisable, 1);
 
   return true;
 }
 
 Cst816S::TouchInfos Cst816S::GetTouchInfo() {
   Cst816S::TouchInfos info;
-  std::array<uint8_t, 6> touchData {};
+  std::array<uint8_t, 7> touchData {};
 
-  // Skip reading register 0 as we don't need it
-  constexpr uint8_t addressOffset = 1;
+  // Read from register 0 (includes TD_STATUS byte)
+  constexpr uint8_t addressOffset = 0;
   auto ret = twiMaster.Read(twiAddress, addressOffset, touchData.data(), sizeof(touchData));
   if (ret != TwiMaster::ErrorCodes::NoError) {
     info.isValid = false;
     return info;
   }
 
-  // This can only be 0 or 1
-  uint8_t nbTouchPoints = touchData[touchPointNumIndex - addressOffset] & 0x0f;
-  uint8_t xHigh = touchData[touchXHighIndex - addressOffset] & 0x0f;
-  uint8_t xLow = touchData[touchXLowIndex - addressOffset];
+  // Offset 0 = TD_STATUS (lower nibble = touch point count)
+  uint8_t nbTouchPoints = touchData[0] & 0x0f;
+  // Offset 1 = gesture ID
+  uint8_t gesture = touchData[1];
+  // Offset 2 = touch point number
+  uint8_t xHigh = touchData[3] & 0x0f;
+  uint8_t xLow = touchData[4];
   uint16_t x = (xHigh << 8) | xLow;
-  uint8_t yHigh = touchData[touchYHighIndex - addressOffset] & 0x0f;
-  uint8_t yLow = touchData[touchYLowIndex - addressOffset];
+  uint8_t yHigh = touchData[5] & 0x0f;
+  uint8_t yLow = touchData[6];
   uint16_t y = (yHigh << 8) | yLow;
-  Gestures gesture = static_cast<Gestures>(touchData[gestureIndex - addressOffset]);
+  Gestures gestureVal = static_cast<Gestures>(gesture);
 
   // Validity check
   if (x >= maxX || y >= maxY ||
-      (gesture != Gestures::None && gesture != Gestures::SlideDown && gesture != Gestures::SlideUp && gesture != Gestures::SlideLeft &&
-       gesture != Gestures::SlideRight && gesture != Gestures::SingleTap && gesture != Gestures::DoubleTap &&
-       gesture != Gestures::LongPress)) {
+      (gestureVal != Gestures::None && gestureVal != Gestures::SlideDown && gestureVal != Gestures::SlideUp && gestureVal != Gestures::SlideLeft &&
+       gestureVal != Gestures::SlideRight && gestureVal != Gestures::SingleTap && gestureVal != Gestures::DoubleTap &&
+       gestureVal != Gestures::LongPress)) {
     info.isValid = false;
     return info;
   }
@@ -98,7 +102,7 @@ Cst816S::TouchInfos Cst816S::GetTouchInfo() {
   info.x = x;
   info.y = y;
   info.touching = (nbTouchPoints > 0);
-  info.gesture = gesture;
+  info.gesture = gestureVal;
   info.isValid = true;
   return info;
 }

@@ -38,22 +38,12 @@ bool TouchHandler::ProcessTouchInfo(Drivers::Cst816S::TouchInfos info) {
     return false;
   }
 
-  // Only a single gesture per touch
+  // The P8b's CST716 in REPORT mode generates multiple "none" gesture events
+  // with touching=true during the gesture, then one gesture event (e.g. "slide")
+  // with touching=true at the end. Set touching=false after a gesture to signal release.
   if (info.gesture != Pinetime::Drivers::Cst816S::Gestures::None) {
-    if (gestureReleased) {
-      if (info.gesture == Pinetime::Drivers::Cst816S::Gestures::SlideDown ||
-          info.gesture == Pinetime::Drivers::Cst816S::Gestures::SlideLeft ||
-          info.gesture == Pinetime::Drivers::Cst816S::Gestures::SlideUp ||
-          info.gesture == Pinetime::Drivers::Cst816S::Gestures::SlideRight ||
-          info.gesture == Pinetime::Drivers::Cst816S::Gestures::LongPress) {
-        if (info.touching) {
-          gesture = ConvertGesture(info.gesture);
-          gestureReleased = false;
-        }
-      } else {
-        gesture = ConvertGesture(info.gesture);
-      }
-    }
+    gesture = ConvertGesture(info.gesture);
+    info.touching = false;
   }
 
   if (!info.touching) {
