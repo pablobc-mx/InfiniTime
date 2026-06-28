@@ -38,9 +38,10 @@ bool TouchHandler::ProcessTouchInfo(Drivers::Cst816S::TouchInfos info) {
     return false;
   }
 
-  // The P8b's CST716 in REPORT mode generates multiple "none" gesture events
-  // with touching=true during the gesture, then one gesture event (e.g. "slide")
-  // with touching=true at the end. Set touching=false after a gesture to signal release.
+  // The P8b's CST716 in REPORT mode generates periodic "none" gesture events
+  // with touching=true during the press (LVGL sees the touch DOWN), then one
+  // gesture event (e.g. "slide" or "singleTap") with touching=true at the end.
+  // Set touching=false here so LVGL sees the touch UP and processes the click.
   if (info.gesture != Pinetime::Drivers::Cst816S::Gestures::None) {
     gesture = ConvertGesture(info.gesture);
     info.touching = false;
