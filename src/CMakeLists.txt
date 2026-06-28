@@ -393,6 +393,7 @@ list(APPEND SOURCE_FILES
         displayapp/screens/Steps.cpp
         displayapp/screens/Timer.cpp
         displayapp/screens/Dice.cpp
+        displayapp/screens/FindPhone.cpp
         displayapp/screens/Sleep.cpp
         displayapp/screens/PassKey.cpp
         displayapp/screens/Error.cpp
@@ -629,6 +630,7 @@ set(INCLUDE_FILES
         displayapp/screens/Motion.h
         displayapp/screens/Timer.h
         displayapp/screens/Dice.h
+        displayapp/screens/FindPhone.h
         displayapp/screens/Sleep.h
         displayapp/screens/Alarm.h
         displayapp/Colors.h

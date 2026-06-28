@@ -29,6 +29,7 @@ namespace Pinetime {
       Calculator,
       Steps,
       Dice,
+      FindPhone,
       Sleep,
       Weather,
       PassKey,

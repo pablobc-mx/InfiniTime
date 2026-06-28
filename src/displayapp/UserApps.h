@@ -9,6 +9,7 @@
 #include "displayapp/screens/Tile.h"
 #include "displayapp/screens/ApplicationList.h"
 #include "displayapp/screens/Sleep.h"
+#include "displayapp/screens/FindPhone.h"
 #include "displayapp/screens/WatchFaceDigital.h"
 #include "displayapp/screens/WatchFaceAnalog.h"
 #include "displayapp/screens/WatchFaceCasioStyleG7710.h"
