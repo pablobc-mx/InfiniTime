@@ -402,8 +402,12 @@ void DisplayApp::Refresh() {
         if (state != States::Running) {
           break;
         }
-        lvgl.SetNewTouchPoint(touchHandler.GetX(), touchHandler.GetY(), touchHandler.IsTouching());
         auto gesture = touchHandler.GestureGet();
+        if (gesture == TouchEvents::Tap || gesture == TouchEvents::DoubleTap) {
+          lvgl.SetNewTap(touchHandler.GetX(), touchHandler.GetY());
+        } else {
+          lvgl.SetNewTouchPoint(touchHandler.GetX(), touchHandler.GetY(), touchHandler.IsTouching());
+        }
         if (gesture == TouchEvents::None) {
           break;
         }

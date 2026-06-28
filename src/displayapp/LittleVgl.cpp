@@ -266,6 +266,14 @@ void LittleVgl::CancelTap() {
 void LittleVgl::ClearTouchState() {
   touchPoint = {-1, -1};
   tapped = false;
+  pendingTapRelease = false;
+}
+
+void LittleVgl::SetNewTap(int16_t x, int16_t y) {
+  isCancelled = false;
+  touchPoint = {x, y};
+  tapped = true;
+  pendingTapRelease = true;
 }
 
 bool LittleVgl::GetTouchPadInfo(lv_indev_data_t* ptr) {
@@ -273,6 +281,10 @@ bool LittleVgl::GetTouchPadInfo(lv_indev_data_t* ptr) {
   ptr->point.y = touchPoint.y;
   if (tapped) {
     ptr->state = LV_INDEV_STATE_PR;
+    if (pendingTapRelease) {
+      pendingTapRelease = false;
+      tapped = false;
+    }
   } else {
     ptr->state = LV_INDEV_STATE_REL;
   }
