@@ -10,6 +10,7 @@
 #include "displayapp/screens/ApplicationList.h"
 #if defined(DRIVER_ACC_SC7A20)
 #include "displayapp/screens/Sleep.h"
+#include "displayapp/screens/FindPhone.h"
 #endif
 #include "displayapp/screens/WatchFaceDigital.h"
 #include "displayapp/screens/WatchFaceAnalog.h"

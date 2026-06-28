@@ -812,6 +812,7 @@ add_definitions(-DTARGET_DEVICE_NAME="${TARGET_DEVICE}")
 if(TARGET_DEVICE STREQUAL "MOY_TON5" OR TARGET_DEVICE STREQUAL "MOY_UNK")
   list(APPEND SOURCE_FILES
     drivers/SC7A20.cpp
+    displayapp/screens/FindPhone.cpp
     displayapp/screens/Sleep.cpp
     components/heartrate/Biquad.cpp
     components/heartrate/Ptagc.cpp
@@ -819,6 +820,7 @@ if(TARGET_DEVICE STREQUAL "MOY_TON5" OR TARGET_DEVICE STREQUAL "MOY_UNK")
     components/sleep/SleepController.cpp
   )
   list(APPEND HEADER_FILES
+    displayapp/screens/FindPhone.h
     displayapp/screens/Sleep.h
     components/heartrate/Biquad.h
     components/heartrate/Ptagc.h

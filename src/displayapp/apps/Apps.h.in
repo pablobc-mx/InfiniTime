@@ -30,6 +30,7 @@ namespace Pinetime {
       Steps,
       Dice,
 #if defined(DRIVER_ACC_SC7A20)
+      FindPhone,
       Sleep,
 #endif
       Weather,
