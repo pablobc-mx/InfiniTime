@@ -75,8 +75,9 @@ TickType_t HeartRateTask::CurrentTaskDelay() {
       }
       // If one is due now, go straight away
       return 0;
-    case States::BackgroundMeasuring:
     case States::ForegroundMeasuring:
+      return pdMS_TO_TICKS(100);
+    case States::BackgroundMeasuring:
       return CalculateSleepTicks();
   }
   // Needed to keep dumb compiler happy, this is unreachable
