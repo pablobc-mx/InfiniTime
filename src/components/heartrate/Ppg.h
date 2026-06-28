@@ -18,12 +18,18 @@ namespace Pinetime {
       void Reset();
 
     private:
-      std::array<int8_t, 200> data;
+      static constexpr size_t dataLength = 150;
+      static constexpr size_t overlapShift = 25;
+
+      std::array<int8_t, dataLength> data;
       size_t dataIndex = 0;
       float offset;
       Biquad hpf;
       Ptagc agc;
       Biquad lpf;
+      float runningAvg[5] = {0};
+      uint8_t avgIdx = 0;
+      uint8_t avgCount = 0;
 
       float ProcessHeartRate();
     };
