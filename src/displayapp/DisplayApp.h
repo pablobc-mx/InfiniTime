@@ -64,6 +64,7 @@ namespace Pinetime {
                  Controllers::Settings& settingsController,
                  Pinetime::Controllers::MotorController& motorController,
                  Pinetime::Controllers::MotionController& motionController,
+                 Pinetime::Controllers::SleepController& sleepController,
                  Pinetime::Controllers::StopWatchController& stopWatchController,
                  Pinetime::Controllers::AlarmController& alarmController,
                  Pinetime::Controllers::BrightnessController& brightnessController,

@@ -45,6 +45,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
                        Pinetime::Controllers::NotificationManager& notificationManager,
                        Pinetime::Drivers::Hrs3300& heartRateSensor,
                        Pinetime::Controllers::MotionController& motionController,
+                       Pinetime::Controllers::SleepController& sleepController,
                        Pinetime::Drivers::MotionSensorType& motionSensor,
                        Controllers::Settings& settingsController,
                        Pinetime::Controllers::HeartRateController& heartRateController,
@@ -69,6 +70,7 @@ SystemTask::SystemTask(Drivers::SpiMaster& spi,
     settingsController {settingsController},
     heartRateController {heartRateController},
     motionController {motionController},
+    sleepController {sleepController},
     displayApp {displayApp},
     heartRateApp(heartRateApp),
     fs {fs},
@@ -454,6 +456,11 @@ void SystemTask::UpdateMotion() {
   auto motionValues = motionSensor.Process();
 
   motionController.Update(motionValues.x, motionValues.y, motionValues.z, motionValues.steps);
+
+  // Feed accelerometer data to sleep tracker
+  auto now = dateTimeController.CurrentDateTime();
+  uint32_t epochSec = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+  sleepController.Update(motionValues.x, motionValues.y, motionValues.z, epochSec);
 
   if (settingsController.GetNotificationStatus() != Controllers::Settings::Notification::Sleep) {
     if ((settingsController.isWakeUpModeOn(Pinetime::Controllers::Settings::WakeUpMode::RaiseWrist) &&

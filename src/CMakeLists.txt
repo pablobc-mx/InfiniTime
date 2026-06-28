@@ -393,6 +393,7 @@ list(APPEND SOURCE_FILES
         displayapp/screens/Steps.cpp
         displayapp/screens/Timer.cpp
         displayapp/screens/Dice.cpp
+        displayapp/screens/Sleep.cpp
         displayapp/screens/PassKey.cpp
         displayapp/screens/Error.cpp
         displayapp/screens/Alarm.cpp
@@ -451,6 +452,7 @@ list(APPEND SOURCE_FILES
         components/datetime/DateTimeController.cpp
         components/brightness/BrightnessController.cpp
         components/motion/MotionController.cpp
+        components/sleep/SleepController.cpp
         components/ble/NimbleController.cpp
         components/ble/DeviceInformationService.cpp
         components/ble/CurrentTimeClient.cpp
@@ -467,6 +469,7 @@ list(APPEND SOURCE_FILES
         components/ble/ServiceDiscovery.cpp
         components/ble/HeartRateService.cpp
         components/ble/MotionService.cpp
+        components/ble/SleepService.cpp
         components/firmwarevalidator/FirmwareValidator.cpp
         components/motor/MotorController.cpp
         components/settings/Settings.cpp
@@ -523,6 +526,7 @@ list(APPEND RECOVERY_SOURCE_FILES
         components/datetime/DateTimeController.cpp
         components/brightness/BrightnessController.cpp
         components/motion/MotionController.cpp
+        components/sleep/SleepController.cpp
         components/ble/NimbleController.cpp
         components/ble/DeviceInformationService.cpp
         components/ble/CurrentTimeClient.cpp
@@ -539,6 +543,7 @@ list(APPEND RECOVERY_SOURCE_FILES
         components/ble/NavigationService.cpp
         components/ble/HeartRateService.cpp
         components/ble/MotionService.cpp
+        components/ble/SleepService.cpp
         components/firmwarevalidator/FirmwareValidator.cpp
         components/settings/Settings.cpp
         components/timer/Timer.cpp
@@ -620,6 +625,7 @@ set(INCLUDE_FILES
         displayapp/screens/Motion.h
         displayapp/screens/Timer.h
         displayapp/screens/Dice.h
+        displayapp/screens/Sleep.h
         displayapp/screens/Alarm.h
         displayapp/Colors.h
         displayapp/widgets/Counter.h
@@ -645,6 +651,7 @@ set(INCLUDE_FILES
         components/datetime/DateTimeController.h
         components/brightness/BrightnessController.h
         components/motion/MotionController.h
+        components/sleep/SleepController.h
         components/firmwarevalidator/FirmwareValidator.h
         components/ble/BleController.h
         components/ble/NotificationManager.h
@@ -661,6 +668,7 @@ set(INCLUDE_FILES
         components/ble/BleClient.h
         components/ble/HeartRateService.h
         components/ble/MotionService.h
+        components/ble/SleepService.h
         components/ble/SimpleWeatherService.h
         components/settings/Settings.h
         components/timer/Timer.h
