@@ -266,25 +266,31 @@ void LittleVgl::CancelTap() {
 void LittleVgl::ClearTouchState() {
   touchPoint = {-1, -1};
   tapped = false;
+#ifdef DRIVER_TOUCH_REPORT
   pendingTapRelease = false;
+#endif
 }
 
+#ifdef DRIVER_TOUCH_REPORT
 void LittleVgl::SetNewTap(int16_t x, int16_t y) {
   isCancelled = false;
   touchPoint = {x, y};
   tapped = true;
   pendingTapRelease = true;
 }
+#endif
 
 bool LittleVgl::GetTouchPadInfo(lv_indev_data_t* ptr) {
   ptr->point.x = touchPoint.x;
   ptr->point.y = touchPoint.y;
   if (tapped) {
     ptr->state = LV_INDEV_STATE_PR;
+#ifdef DRIVER_TOUCH_REPORT
     if (pendingTapRelease) {
       pendingTapRelease = false;
       tapped = false;
     }
+#endif
   } else {
     ptr->state = LV_INDEV_STATE_REL;
   }

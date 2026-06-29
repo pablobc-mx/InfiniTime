@@ -25,7 +25,9 @@ namespace Pinetime {
       bool GetTouchPadInfo(lv_indev_data_t* ptr);
       void SetFullRefresh(FullRefreshDirections direction);
       void SetNewTouchPoint(int16_t x, int16_t y, bool contact);
+#ifdef DRIVER_TOUCH_REPORT
       void SetNewTap(int16_t x, int16_t y);
+#endif
       void CancelTap();
       void ClearTouchState();
       bool IsScrolling();
@@ -68,7 +70,9 @@ namespace Pinetime {
       lv_point_t touchPoint = {};
       bool tapped = false;
       bool isCancelled = false;
+#ifdef DRIVER_TOUCH_REPORT
       bool pendingTapRelease = false;
+#endif
     };
   }
 }

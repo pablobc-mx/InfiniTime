@@ -18,7 +18,9 @@ namespace Pinetime {
     class Settings;
     class MotorController;
     class MotionController;
+#if defined(DRIVER_ACC_SC7A20)
     class SleepController;
+#endif
     class StopWatchController;
     class AlarmController;
     class BrightnessController;
@@ -43,7 +45,9 @@ namespace Pinetime {
       Pinetime::Controllers::Settings& settingsController;
       Pinetime::Controllers::MotorController& motorController;
       Pinetime::Controllers::MotionController& motionController;
+#if defined(DRIVER_ACC_SC7A20)
       Pinetime::Controllers::SleepController* sleepController;
+#endif
       Pinetime::Controllers::StopWatchController& stopWatchController;
       Pinetime::Controllers::AlarmController& alarmController;
       Pinetime::Controllers::BrightnessController& brightnessController;

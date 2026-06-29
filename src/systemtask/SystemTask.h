@@ -11,7 +11,9 @@
 #include <drivers/Bma421.h>
 #include <drivers/SC7A20.h>
 #include <drivers/PinMap.h>
+#ifdef DRIVER_ACC_SC7A20
 #include "components/sleep/SleepController.h"
+#endif
 
 namespace Pinetime {
   namespace Drivers {
@@ -79,7 +81,9 @@ namespace Pinetime {
                  Pinetime::Controllers::NotificationManager& notificationManager,
                  Pinetime::Drivers::Hrs3300& heartRateSensor,
                  Pinetime::Controllers::MotionController& motionController,
+                 #ifdef DRIVER_ACC_SC7A20
                  Pinetime::Controllers::SleepController& sleepController,
+                 #endif
                  Pinetime::Drivers::MotionSensorType& motionSensor,
                  Controllers::Settings& settingsController,
                  Pinetime::Controllers::HeartRateController& heartRateController,
@@ -133,7 +137,9 @@ namespace Pinetime {
       Pinetime::Controllers::Settings& settingsController;
       Pinetime::Controllers::HeartRateController& heartRateController;
       Pinetime::Controllers::MotionController& motionController;
+      #ifdef DRIVER_ACC_SC7A20
       Pinetime::Controllers::SleepController& sleepController;
+      #endif
 
       Pinetime::Applications::DisplayApp& displayApp;
       Pinetime::Applications::HeartRateTask& heartRateApp;

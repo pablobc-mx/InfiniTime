@@ -86,7 +86,9 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
                        Controllers::Settings& settingsController,
                        Pinetime::Controllers::MotorController& motorController,
                        Pinetime::Controllers::MotionController& motionController,
+                       #ifdef DRIVER_ACC_SC7A20
                        Pinetime::Controllers::SleepController& sleepController,
+                       #endif
                        Pinetime::Controllers::StopWatchController& stopWatchController,
                        Pinetime::Controllers::AlarmController& alarmController,
                        Pinetime::Controllers::BrightnessController& brightnessController,
@@ -120,7 +122,9 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
                  settingsController,
                  motorController,
                  motionController,
+                 #ifdef DRIVER_ACC_SC7A20
                  &sleepController,
+                 #endif
                  stopWatchController,
                  alarmController,
                  brightnessController,
@@ -404,7 +408,11 @@ void DisplayApp::Refresh() {
         }
         auto gesture = touchHandler.GestureGet();
         if (gesture == TouchEvents::Tap || gesture == TouchEvents::DoubleTap) {
+          #ifdef DRIVER_TOUCH_REPORT
           lvgl.SetNewTap(touchHandler.GetX(), touchHandler.GetY());
+          #else
+          lvgl.SetNewTouchPoint(touchHandler.GetX(), touchHandler.GetY(), true);
+          #endif
         } else {
           lvgl.SetNewTouchPoint(touchHandler.GetX(), touchHandler.GetY(), touchHandler.IsTouching());
         }

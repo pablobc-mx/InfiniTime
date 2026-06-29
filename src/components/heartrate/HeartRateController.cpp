@@ -13,17 +13,31 @@ void HeartRateController::Update(HeartRateController::States newState, uint8_t h
 }
 
 void HeartRateController::Enable() {
+#ifdef DRIVER_ACC_SC7A20
   if (task != nullptr) {
     state = States::NotEnoughData;
     task->PushMessage(Pinetime::Applications::HeartRateTask::Messages::StartMeasurement);
   }
+#else
+  if (task != nullptr) {
+    state = States::NotEnoughData;
+    task->PushMessage(Pinetime::Applications::HeartRateTask::Messages::Enable);
+  }
+#endif
 }
 
 void HeartRateController::Disable() {
+#ifdef DRIVER_ACC_SC7A20
   if (task != nullptr) {
     state = States::Stopped;
     task->PushMessage(Pinetime::Applications::HeartRateTask::Messages::StopMeasurement);
   }
+#else
+  if (task != nullptr) {
+    state = States::Stopped;
+    task->PushMessage(Pinetime::Applications::HeartRateTask::Messages::Disable);
+  }
+#endif
 }
 
 void HeartRateController::SetHeartRateTask(Pinetime::Applications::HeartRateTask* task) {

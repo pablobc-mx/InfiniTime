@@ -28,6 +28,7 @@ Hrs3300::Hrs3300(TwiMaster& twiMaster, uint8_t twiAddress) : twiMaster {twiMaste
 }
 
 void Hrs3300::Init() {
+#ifdef DRIVER_ACC_SC7A20
   nrf_gpio_cfg_input(30, NRF_GPIO_PIN_NOPULL);
 
   Disable();
@@ -44,6 +45,28 @@ void Hrs3300::Init() {
 
   // 8x gain for better readings on P8b hardware
   WriteRegister(static_cast<uint8_t>(Registers::Hgain), 0xc);
+#else
+  nrf_gpio_cfg_input(30, NRF_GPIO_PIN_NOPULL);
+
+  Disable();
+  vTaskDelay(100);
+
+  // HRS disabled, 50ms wait time between ADC conversion period, current 12.5mA
+  WriteRegister(static_cast<uint8_t>(Registers::Enable), 0x50);
+
+  // Current 12.5mA and low nibble 0xF.
+  // Note: Setting low nibble to 0x8 per the datasheet results in
+  // modulated LED driver output. Setting to 0xF results in clean,
+  // steady output during the ADC conversion period.
+  WriteRegister(static_cast<uint8_t>(Registers::PDriver), ledDriveCurrentValue);
+
+  // HRS and ALS both in 15-bit mode results in ~50ms LED drive period
+  // and presumably ~50ms ADC conversion period.
+  WriteRegister(static_cast<uint8_t>(Registers::Res), 0x77);
+
+  // Gain set to 1x
+  WriteRegister(static_cast<uint8_t>(Registers::Hgain), 0x00);
+#endif
 }
 
 void Hrs3300::Enable() {
@@ -65,6 +88,7 @@ void Hrs3300::Disable() {
 }
 
 Hrs3300::PackedHrsAls Hrs3300::ReadHrsAls() {
+#ifdef DRIVER_ACC_SC7A20
   // Read registers individually (burst reads across non-contiguous 0x0b-0x0c gap
   // may produce garbage on some HRS3300 variants)
   auto hrsM = ReadRegister(static_cast<uint8_t>(Registers::C0DataM));
@@ -78,6 +102,38 @@ Hrs3300::PackedHrsAls Hrs3300::ReadHrsAls() {
   res.hrs = ((hrsL & 0x30) << 12) | (hrsM << 8) | ((hrsH & 0x0f) << 4) | (hrsL & 0x0f);
   res.als = ((alsH & 0x3f) << 11) | (alsM << 3) | (alsL & 0x07);
   return res;
+#else
+  constexpr Registers dataRegisters[] =
+    {Registers::C1dataM, Registers::C0DataM, Registers::C0DataH, Registers::C1dataH, Registers::C1dataL, Registers::C0dataL};
+  // Calculate smallest register address
+  constexpr uint8_t baseOffset = static_cast<uint8_t>(*std::min_element(std::begin(dataRegisters), std::end(dataRegisters)));
+  // Calculate largest address to determine length of read needed
+  // Add one to largest relative index to find the length
+  constexpr uint8_t length = static_cast<uint8_t>(*std::max_element(std::begin(dataRegisters), std::end(dataRegisters))) - baseOffset + 1;
+
+  Hrs3300::PackedHrsAls res;
+  uint8_t buf[length];
+  auto ret = twiMaster.Read(twiAddress, baseOffset, buf, length);
+  if (ret != TwiMaster::ErrorCodes::NoError) {
+    NRF_LOG_INFO("READ ERROR");
+  }
+  // hrs
+  uint8_t m = static_cast<uint8_t>(Registers::C0DataM) - baseOffset;
+  uint8_t h = static_cast<uint8_t>(Registers::C0DataH) - baseOffset;
+  uint8_t l = static_cast<uint8_t>(Registers::C0dataL) - baseOffset;
+  // There are two extra bits (17 and 18) but they are not read here
+  // as resolutions >16bit aren't practically useful (too slow) and
+  // all hrs values throughout InfiniTime are 16bit
+  res.hrs = (buf[m] << 8) | ((buf[h] & 0x0f) << 4) | (buf[l] & 0x0f);
+
+  // als
+  m = static_cast<uint8_t>(Registers::C1dataM) - baseOffset;
+  h = static_cast<uint8_t>(Registers::C1dataH) - baseOffset;
+  l = static_cast<uint8_t>(Registers::C1dataL) - baseOffset;
+  res.als = ((buf[h] & 0x3f) << 11) | (buf[m] << 3) | (buf[l] & 0x07);
+
+  return res;
+#endif
 }
 
 void Hrs3300::WriteRegister(uint8_t reg, uint8_t data) {

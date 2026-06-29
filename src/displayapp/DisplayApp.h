@@ -9,6 +9,9 @@
 #include "displayapp/TouchEvents.h"
 #include "components/brightness/BrightnessController.h"
 #include "components/motor/MotorController.h"
+#ifdef DRIVER_ACC_SC7A20
+#include "components/sleep/SleepController.h"
+#endif
 #include "components/firmwarevalidator/FirmwareValidator.h"
 #include "components/settings/Settings.h"
 #include "displayapp/screens/Screen.h"
@@ -64,7 +67,9 @@ namespace Pinetime {
                  Controllers::Settings& settingsController,
                  Pinetime::Controllers::MotorController& motorController,
                  Pinetime::Controllers::MotionController& motionController,
+                 #ifdef DRIVER_ACC_SC7A20
                  Pinetime::Controllers::SleepController& sleepController,
+                 #endif
                  Pinetime::Controllers::StopWatchController& stopWatchController,
                  Pinetime::Controllers::AlarmController& alarmController,
                  Pinetime::Controllers::BrightnessController& brightnessController,

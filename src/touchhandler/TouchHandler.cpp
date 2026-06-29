@@ -47,9 +47,11 @@ bool TouchHandler::ProcessTouchInfo(Drivers::Cst816S::TouchInfos info) {
     info.touching = false;
   }
 
+#ifdef DRIVER_TOUCH_REPORT
   if (info.touching) {
     lastTouchTick = xTaskGetTickCount();
   }
+#endif
 
   if (!info.touching) {
     gestureReleased = true;

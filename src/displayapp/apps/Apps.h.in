@@ -29,7 +29,9 @@ namespace Pinetime {
       Calculator,
       Steps,
       Dice,
+#if defined(DRIVER_ACC_SC7A20)
       Sleep,
+#endif
       Weather,
       PassKey,
       QuickSettings,

@@ -393,7 +393,6 @@ list(APPEND SOURCE_FILES
         displayapp/screens/Steps.cpp
         displayapp/screens/Timer.cpp
         displayapp/screens/Dice.cpp
-        displayapp/screens/Sleep.cpp
         displayapp/screens/PassKey.cpp
         displayapp/screens/Error.cpp
         displayapp/screens/Alarm.cpp
@@ -443,7 +442,6 @@ list(APPEND SOURCE_FILES
         drivers/InternalFlash.cpp
         drivers/Hrs3300.cpp
         drivers/Bma421.cpp
-        drivers/SC7A20.cpp
         drivers/Bma421_C/bma4.c
         drivers/Bma421_C/bma423.c
         components/battery/BatteryController.cpp
@@ -452,7 +450,6 @@ list(APPEND SOURCE_FILES
         components/datetime/DateTimeController.cpp
         components/brightness/BrightnessController.cpp
         components/motion/MotionController.cpp
-        components/sleep/SleepController.cpp
         components/ble/NimbleController.cpp
         components/ble/DeviceInformationService.cpp
         components/ble/CurrentTimeClient.cpp
@@ -469,7 +466,6 @@ list(APPEND SOURCE_FILES
         components/ble/ServiceDiscovery.cpp
         components/ble/HeartRateService.cpp
         components/ble/MotionService.cpp
-        components/ble/SleepService.cpp
         components/firmwarevalidator/FirmwareValidator.cpp
         components/motor/MotorController.cpp
         components/settings/Settings.cpp
@@ -493,8 +489,6 @@ list(APPEND SOURCE_FILES
         heartratetask/HeartRateTask.cpp
         components/heartrate/HeartRateController.cpp
         components/heartrate/Ppg.cpp
-        components/heartrate/Biquad.cpp
-        components/heartrate/Ptagc.cpp
 
         buttonhandler/ButtonHandler.cpp
         touchhandler/TouchHandler.cpp
@@ -519,7 +513,6 @@ list(APPEND RECOVERY_SOURCE_FILES
         drivers/InternalFlash.cpp
         drivers/Hrs3300.cpp
         drivers/Bma421.cpp
-        drivers/SC7A20.cpp
         drivers/Bma421_C/bma4.c
         drivers/Bma421_C/bma423.c
         components/battery/BatteryController.cpp
@@ -528,7 +521,6 @@ list(APPEND RECOVERY_SOURCE_FILES
         components/datetime/DateTimeController.cpp
         components/brightness/BrightnessController.cpp
         components/motion/MotionController.cpp
-        components/sleep/SleepController.cpp
         components/ble/NimbleController.cpp
         components/ble/DeviceInformationService.cpp
         components/ble/CurrentTimeClient.cpp
@@ -545,7 +537,6 @@ list(APPEND RECOVERY_SOURCE_FILES
         components/ble/NavigationService.cpp
         components/ble/HeartRateService.cpp
         components/ble/MotionService.cpp
-        components/ble/SleepService.cpp
         components/firmwarevalidator/FirmwareValidator.cpp
         components/settings/Settings.cpp
         components/timer/Timer.cpp
@@ -564,8 +555,6 @@ list(APPEND RECOVERY_SOURCE_FILES
         components/heartrate/HeartRateController.cpp
         heartratetask/HeartRateTask.cpp
         components/heartrate/Ppg.cpp
-        components/heartrate/Biquad.cpp
-        components/heartrate/Ptagc.cpp
 
         components/motor/MotorController.cpp
         components/fs/FS.cpp
@@ -629,7 +618,6 @@ set(INCLUDE_FILES
         displayapp/screens/Motion.h
         displayapp/screens/Timer.h
         displayapp/screens/Dice.h
-        displayapp/screens/Sleep.h
         displayapp/screens/Alarm.h
         displayapp/Colors.h
         displayapp/widgets/Counter.h
@@ -645,8 +633,6 @@ set(INCLUDE_FILES
         drivers/Hrs3300.h
         drivers/PinMap.h
         drivers/Bma421.h
-        drivers/SC7A20_registers.h
-        drivers/SC7A20.h
         drivers/Bma421_C/bma4.c
         drivers/Bma421_C/bma423.c
         components/battery/BatteryController.h
@@ -655,7 +641,6 @@ set(INCLUDE_FILES
         components/datetime/DateTimeController.h
         components/brightness/BrightnessController.h
         components/motion/MotionController.h
-        components/sleep/SleepController.h
         components/firmwarevalidator/FirmwareValidator.h
         components/ble/BleController.h
         components/ble/NotificationManager.h
@@ -672,7 +657,6 @@ set(INCLUDE_FILES
         components/ble/BleClient.h
         components/ble/HeartRateService.h
         components/ble/MotionService.h
-        components/ble/SleepService.h
         components/ble/SimpleWeatherService.h
         components/settings/Settings.h
         components/timer/Timer.h
@@ -690,8 +674,6 @@ set(INCLUDE_FILES
         drivers/TwiMaster.h
         heartratetask/HeartRateTask.h
         components/heartrate/Ppg.h
-        components/heartrate/Biquad.h
-        components/heartrate/Ptagc.h
         components/heartrate/HeartRateController.h
         libs/arduinoFFT/src/arduinoFFT.h
         libs/arduinoFFT/src/defs.h
@@ -825,6 +807,33 @@ add_link_options(-Wl,-wrap=malloc -Wl,-wrap=free -Wl,-wrap=calloc -Wl,-wrap=real
 # Target hardware configuration options
 add_definitions(-DTARGET_DEVICE_${TARGET_DEVICE})
 add_definitions(-DTARGET_DEVICE_NAME="${TARGET_DEVICE}")
+
+# P8b-specific sources and headers
+if(TARGET_DEVICE STREQUAL "MOY_TON5" OR TARGET_DEVICE STREQUAL "MOY_UNK")
+  list(APPEND SOURCE_FILES
+    drivers/SC7A20.cpp
+    displayapp/screens/Sleep.cpp
+    components/heartrate/Biquad.cpp
+    components/heartrate/Ptagc.cpp
+    components/ble/SleepService.cpp
+    components/sleep/SleepController.cpp
+  )
+  list(APPEND HEADER_FILES
+    displayapp/screens/Sleep.h
+    components/heartrate/Biquad.h
+    components/heartrate/Ptagc.h
+    components/ble/SleepService.h
+    components/sleep/SleepController.h
+    drivers/SC7A20.h
+    drivers/SC7A20_registers.h
+  )
+  list(APPEND RECOVERY_SOURCE_FILES
+    drivers/SC7A20.cpp
+  )
+  list(APPEND RECOVERYLOADER_SOURCE_FILES
+    drivers/SC7A20.cpp
+  )
+endif()
 if(TARGET_DEVICE STREQUAL "PINETIME")
   add_definitions(-DDRIVER_PINMAP_PINETIME)
   add_definitions(-DCLOCK_CONFIG_LF_SRC=1) # XTAL

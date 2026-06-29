@@ -21,7 +21,9 @@
 #include "components/ble/NavigationService.h"
 #include "components/ble/ServiceDiscovery.h"
 #include "components/ble/MotionService.h"
+#if defined(DRIVER_ACC_SC7A20)
 #include "components/ble/SleepService.h"
+#endif
 #include "components/ble/SimpleWeatherService.h"
 #include "components/fs/FS.h"
 

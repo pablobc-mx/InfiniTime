@@ -107,13 +107,19 @@ Pinetime::Controllers::Settings settingsController {fs};
 Pinetime::Controllers::MotorController motorController {};
 
 Pinetime::Controllers::HeartRateController heartRateController;
+#if defined(DRIVER_ACC_SC7A20)
 Pinetime::Applications::HeartRateTask heartRateApp(heartRateSensor, heartRateController);
+#else
+Pinetime::Applications::HeartRateTask heartRateApp(heartRateSensor, heartRateController, settingsController);
+#endif
 
 Pinetime::Controllers::DateTime dateTimeController {settingsController};
 Pinetime::Drivers::Watchdog watchdog;
 Pinetime::Controllers::NotificationManager notificationManager;
 Pinetime::Controllers::MotionController motionController;
+#ifdef DRIVER_ACC_SC7A20
 Pinetime::Controllers::SleepController sleepController {fs};
+#endif
 Pinetime::Controllers::StopWatchController stopWatchController;
 Pinetime::Controllers::AlarmController alarmController {dateTimeController, fs};
 Pinetime::Controllers::TouchHandler touchHandler;
@@ -131,7 +137,9 @@ Pinetime::Applications::DisplayApp displayApp(lcd,
                                               settingsController,
                                               motorController,
                                               motionController,
+                                              #ifdef DRIVER_ACC_SC7A20
                                               sleepController,
+                                              #endif
                                               stopWatchController,
                                               alarmController,
                                               brightnessController,
@@ -152,7 +160,9 @@ Pinetime::System::SystemTask systemTask(spi,
                                         notificationManager,
                                         heartRateSensor,
                                         motionController,
+                                        #ifdef DRIVER_ACC_SC7A20
                                         sleepController,
+                                        #endif
                                         motionSensor,
                                         settingsController,
                                         heartRateController,
