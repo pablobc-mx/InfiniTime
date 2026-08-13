@@ -61,6 +61,9 @@ void FindPhone::OnRing() {
   // Vibrate as confirmation
   motorController.RunForDuration(100);
 
+  // Notify the phone over BLE so Gadgetbridge rings it
+  systemTask.nimble().findPhone().Ring();
+
   // Update UI
   lv_label_set_text_static(labelStatus, "🔔 Ringing phone...");
   lv_obj_set_style_local_bg_color(btnRing, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);

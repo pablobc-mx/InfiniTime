@@ -817,6 +817,7 @@ if(TARGET_DEVICE STREQUAL "MOY_TON5" OR TARGET_DEVICE STREQUAL "MOY_UNK")
     components/heartrate/Biquad.cpp
     components/heartrate/Ptagc.cpp
     components/ble/SleepService.cpp
+    components/ble/FindPhoneService.cpp
     components/sleep/SleepController.cpp
   )
   list(APPEND HEADER_FILES
@@ -825,6 +826,7 @@ if(TARGET_DEVICE STREQUAL "MOY_TON5" OR TARGET_DEVICE STREQUAL "MOY_UNK")
     components/heartrate/Biquad.h
     components/heartrate/Ptagc.h
     components/ble/SleepService.h
+    components/ble/FindPhoneService.h
     components/sleep/SleepController.h
     drivers/SC7A20.h
     drivers/SC7A20_registers.h

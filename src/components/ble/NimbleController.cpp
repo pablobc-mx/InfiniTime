@@ -49,6 +49,7 @@ NimbleController::NimbleController(Pinetime::System::SystemTask& systemTask,
     heartRateService {*this, heartRateController},
     motionService {*this, motionController},
     fsService {systemTask, fs},
+    findPhoneService {*this},
     serviceDiscovery({&currentTimeClient, &alertNotificationClient}) {
 }
 
@@ -98,6 +99,7 @@ void NimbleController::Init() {
   heartRateService.Init();
   motionService.Init();
   fsService.Init();
+  findPhoneService.Init();
 
   int rc;
   rc = ble_hs_util_ensure_addr(0);
@@ -325,12 +327,15 @@ int NimbleController::OnGAPEvent(ble_gap_event* event) {
       if (event->subscribe.reason == BLE_GAP_SUBSCRIBE_REASON_TERM) {
         heartRateService.UnsubscribeNotification(event->subscribe.attr_handle);
         motionService.UnsubscribeNotification(event->subscribe.attr_handle);
+        findPhoneService.UnsubscribeNotification(event->subscribe.attr_handle);
       } else if (event->subscribe.prev_notify == 0 && event->subscribe.cur_notify == 1) {
         heartRateService.SubscribeNotification(event->subscribe.attr_handle);
         motionService.SubscribeNotification(event->subscribe.attr_handle);
+        findPhoneService.SubscribeNotification(event->subscribe.attr_handle);
       } else if (event->subscribe.prev_notify == 1 && event->subscribe.cur_notify == 0) {
         heartRateService.UnsubscribeNotification(event->subscribe.attr_handle);
         motionService.UnsubscribeNotification(event->subscribe.attr_handle);
+        findPhoneService.UnsubscribeNotification(event->subscribe.attr_handle);
       }
       break;
 
