@@ -167,6 +167,7 @@ void Stress::UpdateUI() {
   lv_obj_set_style_local_text_color(labelScore, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, color);
   lv_label_set_text_static(labelStatus, status);
   lv_obj_set_style_local_text_color(labelStatus, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, color);
+  lv_obj_realign(labelStatus); // re-center: text length changes between states
 }
 
 void Stress::UpdateSelected(lv_obj_t* object, lv_event_t event) {
@@ -217,6 +218,7 @@ void Stress::Refresh() {
     }
     lv_label_set_text_static(labelStatus, "Hold still...");
     lv_obj_set_style_local_text_color(labelStatus, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
+    lv_obj_realign(labelStatus);
     UpdateUI();
     return;
   }
@@ -226,6 +228,7 @@ void Stress::Refresh() {
   if (bpm == 0) {
     // No valid reading yet - keep waiting
     lv_label_set_text_fmt(labelStatus, "Measuring... (%d/%d)", sampleCount, minSamples);
+    lv_obj_realign(labelStatus);
     UpdateUI();
     return;
   }
@@ -243,6 +246,7 @@ void Stress::Refresh() {
     ComputeScore();
   } else {
     lv_label_set_text_fmt(labelStatus, "Measuring... (%d/%d)", sampleCount, minSamples);
+    lv_obj_realign(labelStatus); // re-center: sample count grows
   }
   UpdateUI();
 }
