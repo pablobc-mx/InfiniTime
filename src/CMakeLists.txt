@@ -814,6 +814,8 @@ if(TARGET_DEVICE STREQUAL "MOY_TON5" OR TARGET_DEVICE STREQUAL "MOY_UNK")
     drivers/SC7A20.cpp
     displayapp/screens/FindPhone.cpp
     displayapp/screens/Sleep.cpp
+    displayapp/screens/Calories.cpp
+    displayapp/screens/Stress.cpp
     components/heartrate/Biquad.cpp
     components/heartrate/Ptagc.cpp
     components/ble/SleepService.cpp
@@ -823,6 +825,8 @@ if(TARGET_DEVICE STREQUAL "MOY_TON5" OR TARGET_DEVICE STREQUAL "MOY_UNK")
   list(APPEND HEADER_FILES
     displayapp/screens/FindPhone.h
     displayapp/screens/Sleep.h
+    displayapp/screens/Calories.h
+    displayapp/screens/Stress.h
     components/heartrate/Biquad.h
     components/heartrate/Ptagc.h
     components/ble/SleepService.h

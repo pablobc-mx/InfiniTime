@@ -11,6 +11,8 @@
 #if defined(DRIVER_ACC_SC7A20)
 #include "displayapp/screens/Sleep.h"
 #include "displayapp/screens/FindPhone.h"
+#include "displayapp/screens/Calories.h"
+#include "displayapp/screens/Stress.h"
 #endif
 #include "displayapp/screens/WatchFaceDigital.h"
 #include "displayapp/screens/WatchFaceAnalog.h"

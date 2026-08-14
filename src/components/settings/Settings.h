@@ -305,6 +305,50 @@ namespace Pinetime {
         return settings.stepsGoal;
       };
 
+      void SetWeightKg(uint16_t weight) {
+        if (weight != settings.weightKg) {
+          settingsChanged = true;
+        }
+        settings.weightKg = weight;
+      };
+
+      uint16_t GetWeightKg() const {
+        return settings.weightKg;
+      };
+
+      void SetHeightCm(uint16_t height) {
+        if (height != settings.heightCm) {
+          settingsChanged = true;
+        }
+        settings.heightCm = height;
+      };
+
+      uint16_t GetHeightCm() const {
+        return settings.heightCm;
+      };
+
+      void SetAge(uint8_t age) {
+        if (age != settings.age) {
+          settingsChanged = true;
+        }
+        settings.age = age;
+      };
+
+      uint8_t GetAge() const {
+        return settings.age;
+      };
+
+      void SetRestingHr(uint16_t restingHr) {
+        if (restingHr != settings.restingHr) {
+          settingsChanged = true;
+        }
+        settings.restingHr = restingHr;
+      };
+
+      uint16_t GetRestingHr() const {
+        return settings.restingHr;
+      };
+
       void SetBleRadioEnabled(bool enabled) {
         bleRadioEnabled = enabled;
       };
@@ -354,7 +398,7 @@ namespace Pinetime {
     private:
       Pinetime::Controllers::FS& fs;
 
-      static constexpr uint32_t settingsVersion = 0x000a;
+      static constexpr uint32_t settingsVersion = 0x000b;
 
       struct SettingsData {
         uint32_t version = settingsVersion;
@@ -383,6 +427,13 @@ namespace Pinetime {
 
         bool dfuAndFsEnabledOnBoot = false;
         uint16_t heartRateBackgroundPeriod = std::numeric_limits<uint16_t>::max(); // Disabled by default
+
+        // Calories app profile (Mifflin-St Jeor BMR inputs)
+        uint16_t weightKg = 70;
+        uint16_t heightCm = 170;
+        uint8_t age = 30;
+        // Stress app resting HR baseline (BPM)
+        uint16_t restingHr = 60;
       };
 
       SettingsData settings;

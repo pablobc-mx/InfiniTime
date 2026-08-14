@@ -32,6 +32,8 @@ namespace Pinetime {
 #if defined(DRIVER_ACC_SC7A20)
       FindPhone,
       Sleep,
+      Calories,
+      Stress,
 #endif
       Weather,
       PassKey,
