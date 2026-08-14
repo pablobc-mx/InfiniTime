@@ -53,16 +53,17 @@ Stress::Stress(Controllers::HeartRateController& heartRateController,
   lv_obj_set_style_local_text_color(labelResting, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
   lv_obj_align(labelResting, lv_scr_act(), LV_ALIGN_IN_TOP_RIGHT, -15, 55);
 
-  // Big stress score (0-100)
+  // Big stress score (0-100) — center, below the top row (y≈82-158)
   labelScore = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_font(labelScore, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_76);
   lv_obj_set_style_local_text_color(labelScore, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
   lv_label_set_text_static(labelScore, "--");
   lv_label_set_align(labelScore, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(labelScore, lv_scr_act(), LV_ALIGN_CENTER, 0, -25);
+  lv_obj_align(labelScore, lv_scr_act(), LV_ALIGN_CENTER, 0, -5);
 
   labelStatus = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_text_static(labelStatus, "Measuring...");
+  lv_label_set_align(labelStatus, LV_LABEL_ALIGN_CENTER);
   lv_obj_set_style_local_text_color(labelStatus, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
   lv_obj_align(labelStatus, labelScore, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
 

@@ -33,27 +33,28 @@ Calories::Calories(Controllers::Settings& settingsController,
   lv_label_set_align(icon, LV_LABEL_ALIGN_CENTER);
   lv_obj_align(icon, title, LV_ALIGN_OUT_LEFT_MID, -10, 0);
 
-  // Big daily kcal number
+  // Steps and weight readouts — top row, clear of the big number below
+  labelSteps = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_set_style_local_text_color(labelSteps, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
+  lv_obj_align(labelSteps, lv_scr_act(), LV_ALIGN_IN_TOP_LEFT, 15, 45);
+
+  labelWeight = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_set_style_local_text_color(labelWeight, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
+  lv_obj_align(labelWeight, lv_scr_act(), LV_ALIGN_IN_TOP_RIGHT, -15, 45);
+
+  // Big daily kcal number — center, below the top row (y≈79-121)
   labelKcal = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_font(labelKcal, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_42);
   lv_obj_set_style_local_text_color(labelKcal, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::highlight);
   lv_label_set_text_static(labelKcal, "--");
   lv_label_set_align(labelKcal, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(labelKcal, lv_scr_act(), LV_ALIGN_CENTER, 0, -40);
+  lv_obj_align(labelKcal, lv_scr_act(), LV_ALIGN_CENTER, 0, -20);
 
   lv_obj_t* labelKcalUnit = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_text_static(labelKcalUnit, "kcal today");
+  lv_label_set_align(labelKcalUnit, LV_LABEL_ALIGN_CENTER);
   lv_obj_set_style_local_text_color(labelKcalUnit, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
   lv_obj_align(labelKcalUnit, labelKcal, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
-
-  // Steps and weight readouts — top row, clear of the bottom buttons
-  labelSteps = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(labelSteps, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
-  lv_obj_align(labelSteps, lv_scr_act(), LV_ALIGN_IN_TOP_LEFT, 15, 55);
-
-  labelWeight = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(labelWeight, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
-  lv_obj_align(labelWeight, lv_scr_act(), LV_ALIGN_IN_TOP_RIGHT, -15, 55);
 
   // +/- buttons adjust weight (persisted via settings)
   static constexpr uint8_t btnWidth = 100;
