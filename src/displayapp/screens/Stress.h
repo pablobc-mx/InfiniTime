@@ -25,8 +25,13 @@ namespace Pinetime {
       private:
         static constexpr size_t maxSamples = 30;
         static constexpr size_t minSamples = 20;
-        // Motion gate: sum of |axis deltas| above this resets sample collection
-        static constexpr int motionThreshold = 25;
+        // Motion gate: sum of |axis deltas| above this counts as "moving".
+        // Raised from 25: a wrist at rest still shows small axis deltas
+        // (breathing, pulse, micro-shifts) that exceeded the old threshold.
+        static constexpr int motionThreshold = 60;
+        // Only wipe the sample buffer after this many CONSECUTIVE moving
+        // refreshes (~1s each) — brief movements shouldn't destroy progress.
+        static constexpr int sustainedMotionTicks = 3;
 
         Controllers::HeartRateController& heartRateController;
         Controllers::MotionController& motionController;
@@ -35,6 +40,7 @@ namespace Pinetime {
 
         uint8_t samples[maxSamples] = {0};
         size_t sampleCount = 0;
+        int movingTicks = 0;
         int16_t prevX = 0;
         int16_t prevY = 0;
         int16_t prevZ = 0;

@@ -46,14 +46,14 @@ Calories::Calories(Controllers::Settings& settingsController,
   lv_obj_set_style_local_text_color(labelKcalUnit, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
   lv_obj_align(labelKcalUnit, labelKcal, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
 
-  // Steps and weight readouts
+  // Steps and weight readouts — top row, clear of the bottom buttons
   labelSteps = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_color(labelSteps, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
-  lv_obj_align(labelSteps, labelKcalUnit, LV_ALIGN_OUT_BOTTOM_MID, 0, 12);
+  lv_obj_align(labelSteps, lv_scr_act(), LV_ALIGN_IN_TOP_LEFT, 15, 55);
 
   labelWeight = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_color(labelWeight, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
-  lv_obj_align(labelWeight, labelSteps, LV_ALIGN_OUT_BOTTOM_MID, 0, 4);
+  lv_obj_align(labelWeight, lv_scr_act(), LV_ALIGN_IN_TOP_RIGHT, -15, 55);
 
   // +/- buttons adjust weight (persisted via settings)
   static constexpr uint8_t btnWidth = 100;
@@ -112,7 +112,7 @@ void Calories::RefreshKcal() {
   lv_label_set_text_fmt(labelSteps, "Steps %lu", motionController.NbSteps());
   lv_obj_realign(labelSteps);
 
-  lv_label_set_text_fmt(labelWeight, "Weight %u kg", settingsController.GetWeightKg());
+  lv_label_set_text_fmt(labelWeight, "%u kg", settingsController.GetWeightKg());
   lv_obj_realign(labelWeight);
 }
 

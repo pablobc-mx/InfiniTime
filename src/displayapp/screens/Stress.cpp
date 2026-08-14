@@ -44,26 +44,27 @@ Stress::Stress(Controllers::HeartRateController& heartRateController,
   lv_label_set_align(icon, LV_LABEL_ALIGN_CENTER);
   lv_obj_align(icon, title, LV_ALIGN_OUT_LEFT_MID, -10, 0);
 
+  // HR and resting baseline readouts — top row, clear of the bottom buttons
+  labelHr = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_set_style_local_text_color(labelHr, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
+  lv_obj_align(labelHr, lv_scr_act(), LV_ALIGN_IN_TOP_LEFT, 15, 55);
+
+  labelResting = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_set_style_local_text_color(labelResting, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
+  lv_obj_align(labelResting, lv_scr_act(), LV_ALIGN_IN_TOP_RIGHT, -15, 55);
+
   // Big stress score (0-100)
   labelScore = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_font(labelScore, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_76);
   lv_obj_set_style_local_text_color(labelScore, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
   lv_label_set_text_static(labelScore, "--");
   lv_label_set_align(labelScore, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(labelScore, lv_scr_act(), LV_ALIGN_CENTER, 0, -35);
+  lv_obj_align(labelScore, lv_scr_act(), LV_ALIGN_CENTER, 0, -25);
 
   labelStatus = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_text_static(labelStatus, "Measuring...");
   lv_obj_set_style_local_text_color(labelStatus, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
-  lv_obj_align(labelStatus, labelScore, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
-
-  labelHr = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(labelHr, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
-  lv_obj_align(labelHr, labelStatus, LV_ALIGN_OUT_BOTTOM_MID, 0, 12);
-
-  labelResting = lv_label_create(lv_scr_act(), nullptr);
-  lv_obj_set_style_local_text_color(labelResting, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
-  lv_obj_align(labelResting, labelHr, LV_ALIGN_OUT_BOTTOM_MID, 0, 4);
+  lv_obj_align(labelStatus, labelScore, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
 
   // +/- buttons adjust the resting HR baseline (persisted via settings)
   static constexpr uint8_t btnWidth = 100;
@@ -192,8 +193,10 @@ void Stress::UpdateSelected(lv_obj_t* object, lv_event_t event) {
 }
 
 void Stress::Refresh() {
-  // Motion gating: if the watch moved since the last refresh, discard the
-  // collected samples - HR from a moving wrist is not trustworthy.
+  // Motion gating: HR from a moving wrist is not trustworthy. Instead of
+  // wiping on a single movement tick (too sensitive — breathing/pulse
+  // micro-shifts exceed it), only discard collected samples after several
+  // CONSECUTIVE moving refreshes (~1s each).
   int16_t x = motionController.X();
   int16_t y = motionController.Y();
   int16_t z = motionController.Z();
@@ -206,18 +209,22 @@ void Stress::Refresh() {
   prevZ = z;
 
   if (movement > motionThreshold) {
-    sampleCount = 0;
-    hasScore = false;
+    movingTicks++;
+    if (movingTicks >= sustainedMotionTicks) {
+      sampleCount = 0;
+      hasScore = false;
+    }
     lv_label_set_text_static(labelStatus, "Hold still...");
     lv_obj_set_style_local_text_color(labelStatus, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Colors::lightGray);
     UpdateUI();
     return;
   }
+  movingTicks = 0;
 
   uint8_t bpm = heartRateController.HeartRate();
   if (bpm == 0) {
     // No valid reading yet - keep waiting
-    lv_label_set_text_static(labelStatus, "Measuring...");
+    lv_label_set_text_fmt(labelStatus, "Measuring... (%d/%d)", sampleCount, minSamples);
     UpdateUI();
     return;
   }
@@ -233,7 +240,8 @@ void Stress::Refresh() {
 
   if (sampleCount >= minSamples) {
     ComputeScore();
-    lv_label_set_text_static(labelStatus, "Measuring...");
+  } else {
+    lv_label_set_text_fmt(labelStatus, "Measuring... (%d/%d)", sampleCount, minSamples);
   }
   UpdateUI();
 }
